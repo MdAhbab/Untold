@@ -1,0 +1,292 @@
+@custom-variant dark (&:is(.dark *));
+
+/* ============================================================
+   UNTOLD — theatrical mystery-box design system
+   Light = "Boutique by day"   ·   Dark = "Theater, lights down"
+   ============================================================ */
+
+:root {
+  --font-size: 16px;
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+
+  /* Untold raw tokens — LIGHT (Boutique) */
+  --bg: #f4efe7;
+  --bg-elev: #ffffff;
+  --ink: #16121a;
+  --ink-dim: #5c5462;
+  --violet: #5b33d6;
+  --oxblood: #8e2440;
+  --foil-gold: #b9892f;
+  --foil-rose: #c98a86;
+  --spot: #f6e6be;
+  --ok: #3fa97b;
+
+  /* shadcn token mapping */
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--bg-elev);
+  --card-foreground: var(--ink);
+  --popover: var(--bg-elev);
+  --popover-foreground: var(--ink);
+  --primary: var(--violet);
+  --primary-foreground: #ffffff;
+  --secondary: #ece4d6;
+  --secondary-foreground: var(--ink);
+  --muted: #ece4d6;
+  --muted-foreground: var(--ink-dim);
+  --accent: #efe7da;
+  --accent-foreground: var(--ink);
+  --destructive: var(--oxblood);
+  --destructive-foreground: #ffffff;
+  --border: rgba(22, 18, 26, 0.12);
+  --input: transparent;
+  --input-background: rgba(22, 18, 26, 0.04);
+  --switch-background: #cbc2b4;
+  --font-weight-medium: 600;
+  --font-weight-normal: 400;
+  --ring: var(--foil-gold);
+  --radius: 0.75rem;
+
+  --reveal-glow: radial-gradient(circle at 50% 40%, rgba(124, 77, 255, 0.55), rgba(255, 244, 214, 0.35) 35%, transparent 70%);
+  --foil-grad: linear-gradient(115deg, #8a5e16 0%, #d9b36a 25%, #f5e6b8 45%, #c79a3a 60%, #8a5e16 100%);
+  --texture: radial-gradient(rgba(22,18,26,0.025) 1px, transparent 1px);
+
+  --chart-1: var(--violet);
+  --chart-2: var(--foil-gold);
+  --chart-3: var(--oxblood);
+  --chart-4: var(--foil-rose);
+  --chart-5: var(--ok);
+
+  --sidebar: var(--bg-elev);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--violet);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+}
+
+.dark {
+  /* Untold raw tokens — DARK (Theater) */
+  --bg: #0b0a0f;
+  --bg-elev: #15121c;
+  --ink: #f2eaf2;
+  --ink-dim: #a99fb4;
+  --violet: #7c4dff;
+  --oxblood: #7a1f35;
+  --foil-gold: #d9b36a;
+  --foil-rose: #e0a4a0;
+  --spot: #fff4d6;
+  --ok: #6fe0a8;
+
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--bg-elev);
+  --card-foreground: var(--ink);
+  --popover: var(--bg-elev);
+  --popover-foreground: var(--ink);
+  --primary: var(--violet);
+  --primary-foreground: #0b0a0f;
+  --secondary: #1e1a28;
+  --secondary-foreground: var(--ink);
+  --muted: #1e1a28;
+  --muted-foreground: var(--ink-dim);
+  --accent: #221d30;
+  --accent-foreground: var(--ink);
+  --destructive: var(--oxblood);
+  --destructive-foreground: #ffffff;
+  --border: rgba(242, 234, 242, 0.1);
+  --input: rgba(242, 234, 242, 0.06);
+  --input-background: rgba(242, 234, 242, 0.05);
+  --switch-background: #3a3348;
+  --ring: var(--foil-gold);
+
+  --texture: radial-gradient(rgba(242,234,242,0.02) 1px, transparent 1px);
+
+  --sidebar: var(--bg-elev);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--violet);
+  --sidebar-primary-foreground: #0b0a0f;
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-input-background: var(--input-background);
+  --color-switch-background: var(--switch-background);
+  --color-ring: var(--ring);
+
+  --color-violet: var(--violet);
+  --color-oxblood: var(--oxblood);
+  --color-foil-gold: var(--foil-gold);
+  --color-foil-rose: var(--foil-rose);
+  --color-spot: var(--spot);
+  --color-ok: var(--ok);
+  --color-ink: var(--ink);
+  --color-ink-dim: var(--ink-dim);
+  --color-bg-elev: var(--bg-elev);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 6px);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-display: var(--font-display);
+  --font-sans: var(--font-sans);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    background-image: var(--texture);
+    background-size: 4px 4px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+    -webkit-tap-highlight-color: transparent;
+    transition: background-color 0.6s ease, color 0.6s ease;
+  }
+
+  html {
+    font-size: var(--font-size);
+    /* Root scroll container must be non-static so Motion's useScroll({ target })
+       can measure scroll offsets correctly (avoids the dev warning). */
+    position: relative;
+  }
+
+  h1, h2, h3 {
+    font-optical-sizing: auto;
+    font-variation-settings: "opsz" 120;
+  }
+
+  /* Foil-gold focus ring for keyboard users (AA) */
+  :focus-visible {
+    outline: 2px solid var(--foil-gold);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--violet) 40%, transparent);
+    color: var(--ink);
+  }
+
+  /* Boutique scrollbar */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: color-mix(in oklab, var(--foil-gold) 45%, transparent);
+    border-radius: 999px;
+    border: 2px solid var(--bg);
+  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--foil-gold); }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 500;
+    line-height: 1.08;
+    letter-spacing: -0.01em;
+  }
+
+  h1 { font-size: clamp(2.5rem, 6vw, 5rem); }
+  h2 { font-size: clamp(1.9rem, 4vw, 3rem); }
+  h3 { font-size: clamp(1.4rem, 2.5vw, 1.9rem); }
+  h4 { font-size: 1.15rem; line-height: 1.3; }
+
+  label { font-size: var(--text-base); font-weight: var(--font-weight-medium); }
+  button { font-family: var(--font-sans); }
+  input { font-size: var(--text-base); font-weight: var(--font-weight-normal); }
+}
+
+@layer utilities {
+  /* Playbill / boutique small-caps label */
+  .label-caps {
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 0.28em;
+    font-size: 0.7rem;
+    font-weight: 600;
+  }
+
+  /* Foil text — metallic gradient fill with slow specular sweep */
+  .foil-text {
+    background: var(--foil-grad);
+    background-size: 220% 100%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: foil-sweep 6s linear infinite;
+  }
+  @keyframes foil-sweep {
+    0% { background-position: 200% 0; }
+    100% { background-position: -20% 0; }
+  }
+
+  .foil-surface {
+    position: relative;
+    background: var(--foil-grad);
+    background-size: 220% 100%;
+    color: #1a1206;
+    transition: background-position 0.7s ease, box-shadow 0.4s ease;
+    box-shadow: inset 0 1px 0 rgba(255, 245, 220, 0.6), inset 0 -2px 4px rgba(90, 60, 10, 0.35);
+  }
+  .foil-surface:hover { background-position: 100% 0; }
+
+  .spotlight {
+    background: radial-gradient(60% 55% at 50% 18%, rgba(255, 244, 214, 0.16), transparent 60%);
+  }
+  .reveal-glow { background: var(--reveal-glow); }
+
+  .velvet {
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(124, 77, 255, 0.08), transparent 55%),
+      linear-gradient(180deg, var(--bg-elev), var(--bg));
+  }
+
+  .text-balance { text-wrap: balance; }
+
+  .glow-violet { box-shadow: 0 0 60px -12px rgba(124, 77, 255, 0.55); }
+}
