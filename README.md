@@ -7,7 +7,13 @@
 
 **Type:** embeddable **module** (drop-in checkout + curation API + reveal widget) **and** a
 standalone demo store.
-**Stack:** FastAPI · SQLite · React + Vite · Three.js · GSAP · Lenis.
+**Stack:** FastAPI · SQLite · React + Vite · Tailwind · Framer Motion (scroll-scrubbed CSS-3D reveal).
+
+> **As built (dev):** the signature reveal is rendered with **Framer Motion + CSS 3D** under a
+> real perspective camera — deliberately lighter than a full Three.js/WebGL scene, so it stays
+> smooth on low-power devices and ships in a small bundle. The curation engine is implemented
+> and seedable (see [`backend/app/curation.py`](backend/app/curation.py)); the four "agents"
+> run as deterministic Python today, with LLM (Gemma) wiring as the roadmap.
 
 ---
 
@@ -174,11 +180,27 @@ Full spec in [`AGENTS.md`](AGENTS.md). Four agents:
 - **M6** **Trade/regift** marketplace.
 - **M7** **Module mode**: widget, curation API, webhooks, white-label; compose with DuskDrop.
 
-## 9. Run (once implemented)
+## 9. Run
+
+**Backend** (FastAPI · auto-creates and seeds the SQLite DB on first start):
 ```bash
-cd backend && uv sync && uvicorn app.main:app --reload     # http://localhost:8000/docs
-cd frontend && npm install && npm run dev                  # http://localhost:5173
+cd backend
+python -m venv venv
+venv\Scripts\activate          # Windows  ·  source venv/bin/activate on macOS/Linux
+pip install -r requirements.txt
+uvicorn app.main:app --reload  # http://127.0.0.1:8000/docs
 ```
+
+**Frontend** (React + Vite):
+```bash
+cd frontend
+npm install
+npm run dev                    # http://localhost:5173
+```
+
+The frontend talks to `http://127.0.0.1:8000/api` by default; override with a `VITE_API_BASE`
+env var. If the backend is unreachable (e.g. the static demo), it falls back to a baked-in
+snapshot so the experience still renders.
 
 See [`DESIGN-INSTRUCTIONS.md`](DESIGN-INSTRUCTIONS.md) and [`AGENTS.md`](AGENTS.md).
 

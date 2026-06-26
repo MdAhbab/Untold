@@ -7,8 +7,17 @@ fits the theme, balancing inventory, and writing the reveal narrative. Agents ne
 card or ship a box on their own — assembly produces a box the buyer confirms at checkout.
 
 **Runtime:** system prompt + tool registry + I/O schema per agent; FastAPI workers in dev.
-Every run logged to `AgentRun(id, agent, input, tool_calls, output, confidence, ts)`. Curation
+Every run logged to `AgentRun(id, agent, input, output, confidence, ts)`. Curation
 is **seedable** so a given box is reproducible and explainable.
+
+> **Implementation status (dev).** The deterministic core is real and shipping:
+> [`backend/app/curation.py`](backend/app/curation.py) enforces budget / stock /
+> exclude-tags / no-repeat and scores taste + theme + value + inventory balance, seeded and
+> explainable. The four agents below run today as **deterministic Python** (the Curation Agent
+> *is* the solver; Taste-Learning nudges weights from stored ratings; Inventory-Balancing reads
+> live stock; Reveal-Narrative composes grounded copy from real per-item reasons). Swapping the
+> judgment/voice layer for an LLM (Gemma) behind the same I/O schema is the roadmap — the
+> deterministic guardrails stay regardless.
 
 ---
 

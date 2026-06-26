@@ -5,6 +5,11 @@ for **desktop and mobile**, in **light and dark themes**. The product is a curat
 so the design must feel **theatrical, luxe, and suspenseful** — a velvet-curtain reveal, not a
 generic store grid. Use **React + Vite + Tailwind + Three.js + GSAP/ScrollTrigger + Lenis**.
 
+> **As built:** this brief is the north star. The shipped reveal achieves the same scroll-scrubbed,
+> spoiler-aware "scroll-to-open" beat with **Framer Motion + CSS 3D** under a real perspective
+> camera instead of Three.js/GSAP/Lenis — a deliberate choice for a smaller bundle and smoother
+> low-power performance. Treat the WebGL specifics below as aspiration, not a hard requirement.
+
 Read fully, then build in the **step order** at the end.
 
 ---
