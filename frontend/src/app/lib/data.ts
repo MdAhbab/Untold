@@ -14,6 +14,65 @@ export interface Item {
   isGolden?: boolean;
 }
 
+export interface CollectionEntry {
+  id: string;
+  name: string;
+  date: string;
+  rarity: Rarity;
+  golden?: boolean;
+}
+
+export interface TradeEntry {
+  id: string;
+  item: string;
+  from_user: string;
+  rarity: Rarity;
+  wants: string[];
+}
+
+export interface TasteNode {
+  tag: string;
+  weight: number;
+}
+
+/** Shape of GET /api/data (bootstrap payload). */
+export interface InitialData {
+  sampleBox: Item[];
+  tagGroups: { group: string; tags: string[] }[];
+  tasteNodes: TasteNode[];
+  collection: CollectionEntry[];
+  trades: TradeEntry[];
+}
+
+/** Shape of POST /api/boxes/assemble. */
+export interface AssembledBox {
+  id: string;
+  items: Item[];
+  theme: string;
+  value_total: number;
+  value_floor: number;
+  cost_total: number;
+  tier: Rarity;
+  spoiler: SpoilerLevel;
+  seed: number;
+  confidence: number;
+  notes: string[];
+}
+
+/** Shape of GET /api/boxes/{id}/reveal. */
+export interface RevealConfig {
+  id: string;
+  tier: Rarity;
+  spoiler: SpoilerLevel;
+  value_total: number;
+  items: (Item & { shown: "revealed" | "silhouette" | "hidden" })[];
+  narrative: {
+    intro_line: string;
+    per_item_blurbs: { item_id: string; blurb: string }[];
+    share_card_copy: string;
+  };
+}
+
 export let TAG_GROUPS: { group: string; tags: string[] }[] = [];
 
 export const NOGO_TAGS = ["Nuts", "Dairy", "Scented", "Caffeine", "Alcohol", "Latex"];
@@ -45,11 +104,11 @@ export const SPOILERS: { id: SpoilerLevel; name: string; desc: string }[] = [
 // A sample assembled box (would come from /api/agents/curate)
 export let SAMPLE_BOX: Item[] = [];
 
-export let TASTE_NODES: { tag: string; weight: number }[] = [];
+export let TASTE_NODES: TasteNode[] = [];
 
-export let COLLECTION: any[] = [];
+export let COLLECTION: CollectionEntry[] = [];
 
-export let TRADES: any[] = [];
+export let TRADES: TradeEntry[] = [];
 
 export const PULL_CARDS = [
   { who: "—  M., Lisbon", quote: "I chose Teased. The silhouettes nearly killed me. Best part of my month.", tier: "Rare" },
@@ -59,7 +118,7 @@ export const PULL_CARDS = [
 
 export const rarityLabel: Record<Rarity, string> = { std: "Standard", rare: "Rare", legendary: "Legendary" };
 
-export function updateData(payload: any) {
+export function updateData(payload: InitialData) {
   TAG_GROUPS = payload.tagGroups || [];
   SAMPLE_BOX = payload.sampleBox || [];
   TASTE_NODES = payload.tasteNodes || [];

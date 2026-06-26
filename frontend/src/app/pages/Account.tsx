@@ -1,4 +1,3 @@
-import { motion } from "motion/react";
 import { CreditCard, MapPin, Bell } from "lucide-react";
 import { Eyebrow, RibbonDivider } from "../components/visual/Atmosphere";
 import { Switch } from "../components/ui/switch";

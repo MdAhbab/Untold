@@ -3,6 +3,8 @@ import { motion } from "motion/react";
 import { Check, X } from "lucide-react";
 import { SpotlightBg, Eyebrow, RibbonDivider } from "../components/visual/Atmosphere";
 import { SAMPLE_BOX, TASTE_NODES } from "../lib/data";
+import { useApp } from "../lib/store";
+import { postRating } from "../lib/api";
 
 function Constellation() {
   // place nodes on a radial layout; lines connect to a center taste-core
@@ -43,8 +45,14 @@ function Constellation() {
 }
 
 export function Taste() {
+  const { box } = useApp();
+  const items = box?.items ?? SAMPLE_BOX;
   const [ratings, setRatings] = useState<Record<string, "keep" | "return">>({});
-  const set = (id: string, v: "keep" | "return") => setRatings((r) => ({ ...r, [id]: v }));
+  const set = (id: string, v: "keep" | "return") => {
+    setRatings((r) => ({ ...r, [id]: v }));
+    // Persist the rating; the taste-learning agent folds it into the next box.
+    postRating({ item_id: id, kept: v === "keep", box_id: box?.id }).catch(() => {});
+  };
 
   return (
     <main className="relative pt-28">
@@ -63,7 +71,7 @@ export function Taste() {
           <div>
             <p className="label-caps text-foil-gold">Rate this box</p>
             <div className="mt-5 space-y-3">
-              {SAMPLE_BOX.map((item) => {
+              {items.map((item) => {
                 const r = ratings[item.id];
                 return (
                   <div key={item.id} className="flex items-center gap-4 rounded-2xl border border-border bg-bg-elev/60 p-4">
@@ -87,7 +95,7 @@ export function Taste() {
               })}
             </div>
             <p className="mt-4 text-sm text-ink-dim">
-              {Object.keys(ratings).length} of {SAMPLE_BOX.length} rated — your next box is already shifting.
+              {Object.keys(ratings).length} of {items.length} rated — your next box is already shifting.
             </p>
           </div>
 

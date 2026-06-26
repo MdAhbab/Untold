@@ -48,7 +48,7 @@ export function Trade() {
                 <SpotlightBg className="opacity-0 transition-opacity group-hover:opacity-100" />
                 <div className="relative">
                   <div className="flex justify-between">
-                    <span className="label-caps text-ink-dim">@{t.from}</span>
+                    <span className="label-caps text-ink-dim">@{t.from_user}</span>
                     <RarityBadge rarity={t.rarity} />
                   </div>
                   <div className="my-5 grid aspect-square place-items-center rounded-xl" style={{ background: "linear-gradient(160deg, var(--accent), transparent)" }}>
@@ -57,7 +57,7 @@ export function Trade() {
                   <h4 className="font-display">{t.item}</h4>
                   <p className="mt-2 text-sm text-ink-dim">Wants: {t.wants.join(", ")}</p>
                   <button
-                    onClick={() => toast.success(`Trade offer sent to @${t.from}`, { description: t.item })}
+                    onClick={() => toast.success(`Trade offer sent to @${t.from_user}`, { description: t.item })}
                     className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full border border-foil-gold/50 px-5 py-2.5 text-sm transition-colors hover:bg-foil-gold/10"
                   >
                     <Repeat className="size-3.5" /> Offer a trade

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router";
 import { motion, useScroll, useTransform } from "motion/react";
 import confetti from "canvas-confetti";
@@ -8,21 +8,40 @@ import { SpotlightBg, DustMotes, Eyebrow, FoilText, RibbonDivider } from "../com
 import { NumberRoll } from "../components/visual/Bits";
 import { ItemCard, OddsNote } from "../components/Pieces";
 import { SAMPLE_BOX, SPOILERS, TIERS } from "../lib/data";
+import { getReveal } from "../lib/api";
 import { useApp, useTheme, useIsMobile } from "../lib/store";
+
+const DEFAULT_NARRATIVE =
+  "A late-night box: heat and hush in the same breath. We wrapped the smolder around the quiet and hid a little gold inside.";
 
 export function Reveal() {
   const ref = useRef<HTMLDivElement>(null);
-  const { draft } = useApp();
+  const { draft, box } = useApp();
   const { reducedMotion } = useTheme();
   const isMobile = useIsMobile();
   const [golden, setGolden] = useState(false);
+  const [narrative, setNarrative] = useState<string | null>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const progress = useTransform(scrollYProgress, [0, 0.85], [reducedMotion ? 0.6 : 0, reducedMotion ? 0.6 : 1]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.4], [1, 0]);
 
-  const total = SAMPLE_BOX.reduce((s, i) => s + i.retailValue, 0);
-  const spoiler = SPOILERS.find((s) => s.id === draft.spoiler)!;
-  const tier = TIERS.find((t) => t.id === draft.tier)!;
+  // Render the real assembled box when present; fall back to the sample box.
+  const items = box?.items ?? SAMPLE_BOX;
+  const spoilerId = box?.spoiler ?? draft.spoiler;
+  const total = box?.value_total ?? items.reduce((s, i) => s + i.retailValue, 0);
+  const spoiler = SPOILERS.find((s) => s.id === spoilerId)!;
+  const tier = TIERS.find((t) => t.id === (box?.tier ?? draft.tier))!;
+
+  useEffect(() => {
+    if (!box) return;
+    let alive = true;
+    getReveal(box.id)
+      .then((r) => alive && setNarrative(r.narrative.intro_line))
+      .catch(() => {});
+    return () => {
+      alive = false;
+    };
+  }, [box]);
 
   const fireGolden = () => {
     if (golden || reducedMotion) return setGolden(true);
@@ -43,7 +62,7 @@ export function Reveal() {
             <p className="mx-auto mt-4 max-w-md text-ink-dim">{spoiler.desc} Scroll to open.</p>
           </motion.div>
           <div className="mx-auto flex w-full max-w-md justify-center px-5">
-            <RevealBox progress={progress} spoiler={draft.spoiler} size={isMobile ? 168 : 220} />
+            <RevealBox progress={progress} spoiler={spoilerId} size={isMobile ? 168 : 220} />
           </div>
         </div>
       </section>
@@ -52,7 +71,7 @@ export function Reveal() {
       <section className="relative mx-auto max-w-6xl px-5 py-20">
         <div className="flex flex-col items-center text-center">
           <Eyebrow>Your box · {tier.name}</Eyebrow>
-          <h2 className="mt-5">Five things, chosen for you</h2>
+          <h2 className="mt-5">{items.length} things, chosen for you</h2>
           <div className="mt-6 flex items-end gap-6 sm:gap-8">
             <div>
               <div className="font-display text-3xl sm:text-4xl"><NumberRoll value={total} prefix="$" /></div>
@@ -70,8 +89,8 @@ export function Reveal() {
         <RibbonDivider className="my-12 opacity-30" />
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {SAMPLE_BOX.map((item, i) => {
-            const hidden = draft.spoiler === "sealed" || (draft.spoiler === "teased" && i > 0);
+          {items.map((item, i) => {
+            const hidden = spoilerId === "sealed" || (spoilerId === "teased" && i > 0);
             return (
               <div key={item.id} className="relative">
                 {item.isGolden && !hidden && (
@@ -99,8 +118,7 @@ export function Reveal() {
           <div className="relative">
             <Eyebrow>From the curator</Eyebrow>
             <p className="mt-5 font-display text-2xl leading-snug">
-              “A late-night box: heat and hush in the same breath. We wrapped the smolder around the quiet
-              and hid a little gold inside.”
+              “{narrative ?? DEFAULT_NARRATIVE}”
             </p>
           </div>
         </motion.div>

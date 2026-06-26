@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import type { Rarity, SpoilerLevel } from "./data";
+import type { AssembledBox, InitialData, Rarity, SpoilerLevel } from "./data";
 import { fetchInitialData } from "./api";
 import { updateData } from "./data";
 import FALLBACK_DATA from "./fallback-data";
@@ -49,6 +49,9 @@ const defaultDraft: BoxDraft = {
 interface AppCtx extends ThemeCtx {
   draft: BoxDraft;
   setDraft: (d: Partial<BoxDraft>) => void;
+  /** The box assembled by the curation engine, carried Builder → Reveal. */
+  box: AssembledBox | null;
+  setBox: (b: AssembledBox | null) => void;
 }
 const AppContext = createContext<AppCtx | null>(null);
 export const useApp = () => {
@@ -61,6 +64,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<Theme>("dark");
   const [draft, setDraftState] = useState<BoxDraft>(defaultDraft);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [box, setBox] = useState<AssembledBox | null>(null);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -80,7 +84,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const setDraft = (d: Partial<BoxDraft>) => setDraftState((p) => ({ ...p, ...d }));
 
   return (
-    <AppContext.Provider value={{ theme, toggle, reducedMotion, draft, setDraft }}>
+    <AppContext.Provider value={{ theme, toggle, reducedMotion, draft, setDraft, box, setBox }}>
       <ThemeContext.Provider value={{ theme, toggle, reducedMotion }}>{children}</ThemeContext.Provider>
     </AppContext.Provider>
   );
@@ -99,7 +103,7 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
         // No backend (e.g. the public Vercel demo): fall back to a baked-in
         // snapshot of /api/data so the experience still renders with real data.
         console.warn("Backend unavailable — using offline demo data.", err);
-        updateData(FALLBACK_DATA);
+        updateData(FALLBACK_DATA as InitialData);
         setReady(true);
       });
   }, []);

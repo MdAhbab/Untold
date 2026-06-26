@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { motion } from "motion/react";
 import { SpotlightBg, DustMotes, WaxSeal, FoilText } from "../components/visual/Atmosphere";
 import { useApp } from "../lib/store";
+import { postPreferences, assembleBox } from "../lib/api";
 
 const LINES = [
   "Reading your taste constellation…",
@@ -12,19 +13,48 @@ const LINES = [
   "Tying the ribbon. Pressing the seal.",
 ];
 
+const MIN_SUSPENSE_MS = 3200; // let the moment breathe even if the solver is instant
+const GUARD_MS = 8000; // never trap the user if the request hangs
+
 export function Assembling() {
   const navigate = useNavigate();
-  const { draft } = useApp();
+  const { draft, setBox } = useApp();
   const [line, setLine] = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => setLine((l) => Math.min(l + 1, LINES.length - 1)), 1100);
-    const go = setTimeout(() => navigate("/reveal"), 5800);
+    let cancelled = false;
+    const ticker = setInterval(() => setLine((l) => Math.min(l + 1, LINES.length - 1)), 1100);
+
+    const minWait = new Promise<void>((r) => setTimeout(r, MIN_SUSPENSE_MS));
+    const guard = new Promise<void>((r) => setTimeout(r, GUARD_MS));
+
+    const work = (async () => {
+      try {
+        const { id } = await postPreferences({
+          include_tags: draft.tags,
+          exclude_tags: draft.nogo,
+          budget: draft.budget,
+          cadence: draft.cadence,
+          tier: draft.tier,
+          spoiler: draft.spoiler,
+        });
+        const box = await assembleBox({ preference_id: id });
+        if (!cancelled) setBox(box);
+      } catch (err) {
+        // Backend unavailable → Reveal falls back to the baked-in sample box.
+        console.warn("Curation unavailable — revealing the demo box.", err);
+      }
+    })();
+
+    Promise.all([minWait, Promise.race([work, guard])]).then(() => {
+      if (!cancelled) navigate("/reveal");
+    });
+
     return () => {
-      clearInterval(t);
-      clearTimeout(go);
+      cancelled = true;
+      clearInterval(ticker);
     };
-  }, [navigate]);
+  }, [draft, navigate, setBox]);
 
   return (
     <main className="relative grid min-h-screen place-items-center overflow-hidden velvet">
@@ -70,7 +100,7 @@ export function Assembling() {
         </div>
 
         <div className="mt-8 h-1 w-64 overflow-hidden rounded-full bg-border">
-          <motion.div className="h-full foil-surface" initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 5.8, ease: "linear" }} />
+          <motion.div className="h-full foil-surface" initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: MIN_SUSPENSE_MS / 1000, ease: "easeInOut" }} />
         </div>
 
         <button onClick={() => navigate("/reveal")} className="mt-8 label-caps text-ink-dim underline-offset-4 transition-colors hover:text-foreground hover:underline">
