@@ -55,9 +55,15 @@ export function RevealBox({
   const haloOpacity = useTransform(progress, [0.2, 0.75], [0, 1]);
   const haloScale = useTransform(progress, [0.2, 1], [0.5, 1.45]);
 
-  // Contents rise out of the opening, billboarded to face the viewer.
-  const contentZ = useTransform(progress, [0.45, 1], [-size * 0.1, size * 0.6]);
-  const contentOpacity = useTransform(progress, [0.45, 0.72], [0, spoiler === "sealed" ? 0 : 1]);
+  // Contents rise out of the opening, billboarded to face the viewer. They are
+  // anchored at the opening plane (z >= 0) and only ever travel UP, so they can
+  // never dip into the walls — CSS 3D can't depth-clip, so a pillar that crossed
+  // the rim would visibly punch through the box. They grow upward as they emerge.
+  // A small wholesale lift keeps the pillar feet pinned to the rim while scaleY
+  // does the real work — they grow upward out of the opening rather than float up.
+  const contentZ = useTransform(progress, [0.5, 1], [0, size * 0.12]);
+  const contentScaleY = useTransform(progress, [0.48, 0.9], [0.15, 1]);
+  const contentOpacity = useTransform(progress, [0.48, 0.62], [0, spoiler === "sealed" ? 0 : 1]);
   const contentTransform = useMotionTemplate`translateZ(${contentZ}px) rotateZ(-45deg) rotateX(-60deg)`;
 
   // Whole box breathes upward as it opens.
@@ -117,27 +123,33 @@ export function RevealBox({
             </motion.div>
           </div>
 
-          {/* rising contents (billboarded; silhouettes for teased, lit shapes for glimpse) */}
+          {/* rising contents — a zero-size anchor at the opening centre, billboarded
+              to face the viewer; the pillars hang off its bottom edge and grow up. */}
           <motion.div
             aria-hidden
-            className="absolute left-1/2 top-1/2 flex items-end gap-3"
+            className="absolute left-1/2 top-1/2"
             style={{ x: "-50%", y: "-50%", transform: contentTransform, opacity: contentOpacity, transformStyle: "preserve-3d" }}
           >
-            {[0, 1, 2].map((i) => (
-              <div
-                key={i}
-                className="rounded-t-2xl"
-                style={{
-                  width: size * 0.2,
-                  height: size * (0.42 + i * 0.12),
-                  background:
-                    spoiler === "teased"
-                      ? "linear-gradient(180deg, rgba(11,10,15,0.92), rgba(11,10,15,0.7))"
-                      : "linear-gradient(180deg, var(--violet), var(--oxblood))",
-                  boxShadow: "0 0 30px -6px rgba(124,77,255,0.55)",
-                }}
-              />
-            ))}
+            <motion.div
+              className="absolute bottom-0 left-1/2 flex -translate-x-1/2 items-end gap-2"
+              style={{ scaleY: contentScaleY, transformOrigin: "bottom" }}
+            >
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="rounded-t-xl"
+                  style={{
+                    width: size * 0.17,
+                    height: size * (0.42 + i * 0.13),
+                    background:
+                      spoiler === "teased"
+                        ? "linear-gradient(180deg, rgba(11,10,15,0.92), rgba(11,10,15,0.7))"
+                        : "linear-gradient(180deg, var(--violet), var(--oxblood))",
+                    boxShadow: "0 0 30px -6px rgba(124,77,255,0.55)",
+                  }}
+                />
+              ))}
+            </motion.div>
           </motion.div>
 
           {/* lid — lifts along the box normal, then tips back */}
