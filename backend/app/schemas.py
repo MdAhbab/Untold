@@ -1,5 +1,5 @@
 from pydantic import BaseModel, ConfigDict
-from typing import List, Optional, Any, Dict
+from typing import List, Optional, Dict
 
 class ItemBase(BaseModel):
     id: str
@@ -26,12 +26,15 @@ class TagGroupBase(BaseModel):
     tags: List[str]
 
 class PreferenceBase(BaseModel):
-    include_tags: List[str]
-    exclude_tags: List[str]
-    budget: float
-    cadence: str
-    tier: str
-    spoiler: str
+    include_tags: List[str] = []
+    exclude_tags: List[str] = []
+    budget: float = 75
+    cadence: str = "monthly"
+    tier: str = "rare"
+    spoiler: str = "teased"
+
+class PreferenceResponse(BaseModel):
+    id: str
 
 class TradeListing(BaseModel):
     id: str
@@ -57,3 +60,54 @@ class InitializeResponse(BaseModel):
     tasteNodes: List[TasteNode]
     collection: List[CollectionItem]
     trades: List[TradeListing]
+
+# ---- Curation engine ----
+class AssembleRequest(BaseModel):
+    preference_id: Optional[str] = None
+    include_tags: Optional[List[str]] = None
+    exclude_tags: Optional[List[str]] = None
+    budget: Optional[float] = None
+    tier: Optional[str] = None
+    spoiler: Optional[str] = None
+    seed: Optional[int] = None
+
+class AssembledItem(BaseModel):
+    id: str
+    name: str
+    category: str
+    tags: List[str]
+    cost: float
+    retailValue: float
+    rarity: str
+    reason: str
+    isGolden: bool = False
+
+class AssembledBoxResponse(BaseModel):
+    id: str
+    items: List[AssembledItem]
+    theme: str
+    value_total: float
+    value_floor: float
+    cost_total: float
+    tier: str
+    spoiler: str
+    seed: int
+    confidence: float
+    notes: List[str] = []
+
+class RevealItem(AssembledItem):
+    shown: str  # revealed | silhouette | hidden
+
+class RevealResponse(BaseModel):
+    id: str
+    tier: str
+    spoiler: str
+    value_total: float
+    items: List[RevealItem]
+    narrative: Dict
+
+class RatingRequest(BaseModel):
+    item_id: str
+    kept: bool
+    score: Optional[int] = None
+    box_id: Optional[str] = None

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Float, Boolean
 from .database import Base
 
 class Item(Base):
@@ -102,3 +102,13 @@ class CollectionItem(Base):
     date = Column(String)
     rarity = Column(String)
     golden = Column(Boolean, default=False)
+
+class AgentRun(Base):
+    """Audit log — every solver/agent run is recorded so any box is explainable."""
+    __tablename__ = "agent_runs"
+    id = Column(Integer, primary_key=True, index=True)
+    agent = Column(String)
+    input_json = Column(String)
+    output_json = Column(String)
+    confidence = Column(Float, default=0.0)
+    created_at = Column(String)
